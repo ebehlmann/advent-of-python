@@ -3,7 +3,7 @@ def process_input(filename):
     list2 = []
     with open(filename, 'r') as puzzle_input:
         for line in puzzle_input:
-            parts = line.split('   ')
+            parts = line.split()
             if len(parts) == 2:
                 list1.append(int(parts[0]))
                 list2.append(int(parts[1]))
