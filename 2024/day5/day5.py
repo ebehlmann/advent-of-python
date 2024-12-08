@@ -25,7 +25,7 @@ def get_middle_page_sum(rules, updates):
     total = 0
     for update in updates:
         if is_valid(update, rules):
-            total += update[floor(len(update)/2)]
+            total += update[floor(len(update) / 2)]
     return total
 
 
