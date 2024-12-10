@@ -14,10 +14,7 @@ def process_input(filename):
     return equations
 
 
-def get_possible_operator_arrangements(count, include_concat=False):
-    operators = ['+', '*']
-    if include_concat:
-        operators.append('||')
+def get_possible_operator_arrangements(operators, count):
     return list(product(operators, repeat=count))
 
 
@@ -37,10 +34,10 @@ def test_equation(numbers, operators, result):
     return False
 
 
-def get_calibration_result(equations, include_concat):
+def get_calibration_result(equations, available_operators):
     result = 0
     for equation in equations:
-        possible_operators = get_possible_operator_arrangements(len(equation['numbers']) - 1, include_concat)
+        possible_operators = get_possible_operator_arrangements(available_operators, len(equation['numbers']) - 1)
         for operators in possible_operators:
             if test_equation(equation['numbers'], operators, equation['result']):
                 result += equation['result']
@@ -49,5 +46,5 @@ def get_calibration_result(equations, include_concat):
 
 
 input_equations = process_input('input.txt')
-print(f'Part 1: {get_calibration_result(input_equations, False)}')
-print(f'Part 2: {get_calibration_result(input_equations, True)}')
+print(f'Part 1: {get_calibration_result(input_equations, ["*", "+"])}')
+print(f'Part 2: {get_calibration_result(input_equations, ["*", "+", "||"])}')
