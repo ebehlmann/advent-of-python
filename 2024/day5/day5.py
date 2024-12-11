@@ -29,5 +29,26 @@ def get_middle_page_sum(rules, updates):
     return total
 
 
+def fix_update(rules, update):
+    result = []
+    for x in update:
+        must_follow = [result.index(y[0]) for y in rules if y[1] == x and y[0] in result]
+        if len(must_follow) > 0:
+            result.insert(max(must_follow) + 1, x)
+        else:
+            result.insert(0, x)
+    return result
+
+
+def get_middle_page_sum_fixed(rules, updates):
+    total = 0
+    for update in updates:
+        if not is_valid(update, rules):
+            fixed = fix_update(rules, update)
+            total += fixed[floor(len(update) / 2)]
+    return total
+
+
 rule_inputs, update_inputs = process_input('input.txt')
 print(f'Part 1: {get_middle_page_sum(rule_inputs, update_inputs)}')
+print(f'Part 2: {get_middle_page_sum_fixed(rule_inputs, update_inputs)}')
