@@ -28,6 +28,23 @@ def get_antinodes_for_pair(ant1, ant2):
     return [node1, node2]
 
 
+def get_antinodes_in_line(ant1, ant2, city_map):
+    antinodes = [ant1, ant2]
+    antinode = ant1
+    while True:
+        antinode = [antinode[0] + (ant1[0] - ant2[0]), antinode[1] + (ant1[1] - ant2[1])]
+        if not is_on_map(antinode[0], antinode[1], city_map):
+            break
+        antinodes.append(antinode)
+    antinode = ant2
+    while True:
+        antinode = [antinode[0] + (ant2[0] - ant1[0]), antinode[1] + (ant2[1] - ant1[1])]
+        if not is_on_map(antinode[0], antinode[1], city_map):
+            break
+        antinodes.append(antinode)
+    return antinodes
+
+
 def get_antinode_count(frequencies, city_map):
     antinodes = []
     for frequency, locs in frequencies.items():
@@ -40,5 +57,18 @@ def get_antinode_count(frequencies, city_map):
     return len(antinodes)
 
 
+def get_antinode_count_with_resonance(frequencies, city_map):
+    antinodes = []
+    for frequency, locs in frequencies.items():
+        pairs = combinations(locs, 2)
+        for pair in pairs:
+            nodes = get_antinodes_in_line(pair[0], pair[1], city_map)
+            for node in nodes:
+                if node not in antinodes:
+                    antinodes.append(node)
+    return len(antinodes)
+
+
 input_map, input_frequencies = map_antennas('input.txt')
 print(f'Part 1: {get_antinode_count(input_frequencies, input_map)}')
+print(f'Part 2: {get_antinode_count_with_resonance(input_frequencies, input_map)}')
