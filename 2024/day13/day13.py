@@ -1,4 +1,5 @@
 from math import floor
+import numpy as np
 
 
 def process_input(filename):
@@ -23,39 +24,28 @@ def process_input(filename):
     return claws
 
 
-def get_successes(a_x, a_y, b_x, b_y, target_x, target_y):
-    successes = []
-    for a in range(0, 101):
-        for b in range(0, 101):
-            x = (a * a_x) + (b * b_x)
-            y = (a * a_y) + (b * b_y)
-            if x == target_x and y == target_y:
-                successes.append({'A': a, 'B': b})
-            elif x > target_x or y > target_y:
-                break
-    return successes
+def get_successes_point(a_x, a_y, b_x, b_y, target_x, target_y):
+    claw = np.array([[a_x, b_x], [a_y, b_y]])
+    target = np.array([target_x, target_y])
+    result = np.linalg.solve(claw, target)
+    a, b = list(np.round(result, 4))
+    if a >= 0 and a % 1 == 0 and b >= 0 and b % 1 == 0:
+        return int(a), int(b)
+    return None, None
 
 
-def get_successes_no_limits(a_x, a_y, b_x, b_y, target_x, target_y):
-    successes = []
-    # case of 100% A's and 0 B's
-    if target_x % a_x == 0 and target_y % a_y == 0 and (target_x/a_x) == (target_y/a_y):
-        successes.append({'A': floor(target_x / a_x), 'B': 0})
-
-
-def simulate_claws(claws):
+def simulate_claws(claws, convert_target=False):
     tokens = 0
     for claw in claws:
-        successes = get_successes(claw['a_x'], claw['a_y'], claw['b_x'], claw['b_y'], claw['target_x'], claw['target_y'])
-        if len(successes) > 0:
-            min_tokens = 400
-            for success in successes:
-                price = (success['A'] * 3) + success['B']
-                if price < min_tokens:
-                    min_tokens = price
-            tokens += min_tokens
+        if convert_target:
+            claw['target_x'] += 10000000000000
+            claw['target_y'] += 10000000000000
+        a, b = get_successes_point(claw['a_x'], claw['a_y'], claw['b_x'], claw['b_y'], claw['target_x'], claw['target_y'])
+        if a and b:
+            tokens += a * 3 + b
     return tokens
 
 
 input_claws = process_input('input.txt')
 print(f'Part 1: {simulate_claws(input_claws)}')
+print(f'Part 2: {simulate_claws(input_claws, True)}')

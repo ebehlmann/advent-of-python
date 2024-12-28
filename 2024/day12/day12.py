@@ -41,7 +41,7 @@ def split_areas(plant_locs):
         while len(to_check) > 0:
             current_item = to_check.pop()
             to_add = [loc for loc in plant_locs if
-                      (current_item[0] == loc[0] and abs(current_item[1]-loc[1]) == 1) or
+                      (current_item[0] == loc[0] and abs(current_item[1] - loc[1]) == 1) or
                       (abs(current_item[0] - loc[0]) == 1 and current_item[1] == loc[1])
                       ]
             if len(to_add) > 0:
@@ -52,18 +52,40 @@ def split_areas(plant_locs):
     return areas
 
 
+def get_sides(area):
+    max_y_per_x = {}
+    min_y_per_x = {}
+    max_x_per_y = {}
+    min_x_per_y = {}
+    for i in area:
+        if i[0] not in max_y_per_x or i[1] > max_y_per_x[i[0]]:
+            max_y_per_x[i[0]] = i[1]
+        if i[0] not in min_y_per_x or i[1] < min_y_per_x[i[0]]:
+            min_y_per_x[i[0]] = i[1]
+        if i[1] not in max_x_per_y or i[0] > max_x_per_y[i[1]]:
+            max_x_per_y[i[1]] = i[0]
+        if i[1] not in min_x_per_y or i[0] < min_x_per_y[i[1]]:
+            min_x_per_y[i[1]] = i[0]
+    return len(set(max_y_per_x.values())) + len(set(min_y_per_x.values())) \
+           + len(set(max_x_per_y.values())) + len(set(min_x_per_y.values()))
+
+
 def get_fence_cost(farm_map):
-    cost = 0
+    base_cost = 0
+    bulk_cost = 0
     plants = get_plants_and_locs(farm_map)
     for plant, locs in plants.items():
         areas = split_areas(locs)
         for area in areas:
-            fencing = 0
+            fence_pieces = 0
             for loc in area:
-                fencing += get_fence_count(loc, farm_map)
-            cost += len(area) * fencing
-    return cost
+                fence_pieces += get_fence_count(loc, farm_map)
+            base_cost += len(area) * fence_pieces
+            bulk_cost += len(area) * get_sides(area)
+    return base_cost, bulk_cost
 
 
 input_map = process_input('input.txt')
-print(f'Part 1: {get_fence_cost(input_map)}')
+part1, part2 = get_fence_cost(input_map)
+print(f'Part 1: {part1}')
+print(f'Part 2: {part2}')
