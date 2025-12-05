@@ -33,4 +33,4 @@ def get_password(max_clicks, starting_pos, filename, count_passes=False):
 
 
 print(f"Part 1: {get_password(100, 50, 'input.txt')}")
-print(f"Part 1: {get_password(100, 50, 'input.txt', True)}")
+print(f"Part 2: {get_password(100, 50, 'input.txt', True)}")
